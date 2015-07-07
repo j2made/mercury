@@ -1,0 +1,6 @@
+# Dependencies
+node_modules
+assets/bower
+
+# Ignore dist, as this directory is built with gulp
+dist

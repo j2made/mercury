@@ -1,0 +1,26 @@
+{
+  "name": "Mercury",
+  "version": "0.1.0",
+  "homepage": "http://github.com/iamhexcoder/mercury",
+  "authors": [
+    "Shaun M. Baer <shaun.baer@gmail.com.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "assets/vendor"
+  ],
+  "dependencies": {
+    "modernizr": "2.8.2",
+    "bourbon": "~4.2.0",
+    "neat": "~1.7.1",
+    "normalize-scss": "latest"
+  },
+  "overrides": {
+    "modernizr": {
+      "main": "./modernizr.js"
+    }
+  }
+}
