@@ -1,6 +1,8 @@
 # Dependencies
 node_modules
-assets/bower
+bower_components
 
-# Ignore dist, as this directory is built with gulp
-dist
+# /drc file is built with gulp
+src
+
+

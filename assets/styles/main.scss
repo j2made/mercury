@@ -1,8 +1,11 @@
 // Import all sass files here!
 
 @charset  'UTF-8';
-@import   'utilities/base';
-@import   'global/base';
+@import   '../../bower_components/normalize-scss/normalize.scss';               // Normalize
+@import   '../../bower_components/bourbon/app/assets/stylesheets/bourbon';      // Bourbon
+@import   '../../bower_components/neat/app/assets/stylesheets/neat';            // Bourbon Neat
+@import   'utilities/base';                                                     // Vars, Mixins, Extends
+@import   'layout/base';                                                        // Site Styles
 
 
 
