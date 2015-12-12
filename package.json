@@ -24,7 +24,7 @@
     "npm": ">=2.1.5"
   },
   "scripts": {
-    "postinstall": "bower install"
+    "postinstall": "bower install && gulp build"
   },
   "devDependencies": {
     "browser-sync": "2.7.13",

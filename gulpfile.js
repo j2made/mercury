@@ -165,29 +165,10 @@ gulp.task('js_watch', ['js_lint_task', 'scripts_task'], browserSync.reload);
 
 
 /**
- * SERVE TASK
- *
- * Initializes Browsersync
- */
-gulp.task('watch', function() {
-  browserSync.init({
-      proxy: "proxy.dev"
-  });
-
-  gulp.watch([path + 'styles/**/*'], ['style_task']);
-  gulp.watch([path + 'scripts/**/*'], ['js_watch']);
-  gulp.watch([path + 'img/**/*'], ['image_task']);
-  gulp.watch(['**/*.php', '**/*.html']).on('change', browserSync.reload);
-});
-
-
-
-/**
  * Default Gulp Task
  * Scripts, Styles, Images
  */
 gulp.task('default', ['scripts_task', 'style_task', 'image_task', 'html_src_task']);
-
 
 
 /**
@@ -206,3 +187,19 @@ gulp.task('build', [
 ]);
 
 
+
+/**
+ * SERVE TASK
+ *
+ * Initializes Browsersync
+ */
+gulp.task('serve', function() {
+  browserSync.init({
+      proxy: "CONFIG_THIS"
+  });
+
+  gulp.watch([path + 'styles/**/*'], ['style_task']);
+  gulp.watch([path + 'scripts/**/*'], ['js_watch']);
+  gulp.watch([path + 'img/**/*'], ['image_task']);
+  gulp.watch(['**/*.php', '**/*.html']).on('change', browserSync.reload);
+});
