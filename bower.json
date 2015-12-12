@@ -14,13 +14,15 @@
   ],
   "dependencies": {
     "jquery": "1.11.1",
-    "bourbon": "~4.2.0",
-    "neat": "~1.7.1",
-    "normalize-scss": "latest"
+    "bourbon": "~4.2.6",
+    "neat": "~1.7.2",
+    "normalize-scss": "latest",
+    "modernizr": "2.8.3"
   },
   "overrides": {
     "modernizr": {
-      "main": "./modernizr.js"
+      "main": "./modernizr.js",
+      "ignore": true
     },
     "jquery": {
       "ignore": true

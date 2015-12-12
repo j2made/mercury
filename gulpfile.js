@@ -3,36 +3,39 @@ var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var pngcrush = require('imagemin-pngcrush');
 var args = require('yargs').argv;
-var gulpif = require('gulp-if');
-var htmlreplace = require('gulp-html-replace');
 var mainBowerFiles = require('main-bower-files');
 var jshint = require('gulp-jshint');
 var $ = require('gulp-load-plugins')();
 
 
-// DIR VARS
-var path = './assets/';
-var destination_path = './src/';
-var src_path = './dist/'
-var minExtension = '';
+// DIR AND PATH VARS
+var path = './assets/';                   // Path to base assets
+var destination_path = './src/';          // Path to non-production directory
+var production_path = './dist/'           // Path to production direrctory
+var bower_path = './bower_components/'    // Path to Bower files
+var minExtension = '';                    // Unminified file extension
+
 var env = {
-  production: args.production,
-  dev: !args.production
+  production: args.production,            // If production flag is passed
+  dev: !args.production                   // Default (no flag)
 }
 
 if(env.production) {
-  var minExtension = '.min';
-  var destination_path = src_path;
+  var minExtension = '.min';              // Minified file extension
+  var destination_path = production_path; // Change path to production dir
 }
 
 
-// JS HINT - lint scripts
+/**
+ * JS LINT TASK
+ *
+ * Lint using jshint, stylish output.
+ */
 gulp.task('js_lint_task', function(){
   return gulp.src(path + 'scripts/**/*.js')
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('jshint-stylish-source'));
 });
-
 
 
 /**
@@ -42,7 +45,7 @@ gulp.task('js_lint_task', function(){
  */
 gulp.task('html_src_task', function(){
   gulp.src('index.html')
-  .pipe( htmlreplace({
+  .pipe( $.htmlReplace({
       'css': destination_path + 'styles' + minExtension + '.css',
       'js': destination_path + 'main' + minExtension + '.js'
     },
@@ -55,6 +58,25 @@ gulp.task('html_src_task', function(){
 });
 
 
+
+/**
+ * BUILD TASKS
+ *
+ * Build Modernizr.js and Jquery.js files
+ */
+gulp.task('build_modernizr', function() {
+  gulp.src(bower_path + '/modernizr/modernizr.js')
+    .pipe($.uglify())
+    .pipe($.rename('modernizr-2.8.3.min.js'))
+    .pipe(gulp.dest(production_path))
+});
+// jQuery
+gulp.task('build_jquery', function() {
+  gulp.src(bower_path + '/jQuery/dist/jquery.js')
+    .pipe($.uglify())
+    .pipe($.rename('jquery.min.js'))
+    .pipe(gulp.dest(production_path))
+});
 
 
 
@@ -69,49 +91,51 @@ gulp.task('html_src_task', function(){
  */
 gulp.task('scripts_task', ['js_lint_task'], function() {
 
+  // Get all Bower js files.
   var jsFiles = mainBowerFiles('**/*.js');
   jsFiles.push( path + 'scripts/**/!(main)*.js' );
   jsFiles.push( path + 'scripts/main.js' );
 
+  // Start Gulp tasks
   gulp.src(jsFiles)
-    .pipe($.plumber())
-    .pipe( gulpif( env.dev, $.sourcemaps.init() ) )
-      .pipe($.concat('main.js'))
-    .pipe( gulpif( env.dev, $.sourcemaps.write() ) )
+    .pipe( $.if( env.dev, $.plumber()) )
+    .pipe( $.if( env.dev, $.sourcemaps.init() ) )
+      .pipe($.concat('main' + minExtension + '.js'))
+    .pipe( $.if( env.dev, $.sourcemaps.write() ) )
 
     // Run --production to generate minified files
-    .pipe( gulpif( env.production, $.uglify()) )
-    .pipe( gulpif( env.production, $.rename('main.min.js')) )
+    .pipe( $.if( env.production, $.uglify()) )
     .pipe( gulp.dest(destination_path) );
+
 });
 
 
 /**
- * STYPES TASK
+ * STYLES TASK
  *
  * Convert SASS to CSS
  *
  * Create `styles.css` file. If `--production` arg is passed,
- * a minified file will be created in `/src`
+ * a minified file will be created in `/dist`
  */
 gulp.task('style_task', function() {
   gulp.src(path + 'styles/main.scss')
-    .pipe( gulpif( env.dev,$.plumber()) )
-    .pipe( gulpif( env.dev, $.sourcemaps.init() ) )
+    .pipe( $.if( env.dev, $.plumber()) )
+    .pipe( $.if( env.dev, $.sourcemaps.init() ) )
       .pipe($.sass({ errLogToConsole: true }))
       .pipe($.autoprefixer({
         browsers: ['last 2 versions', 'ie 8', 'ie 9', 'android 2.3', 'android 4', 'opera 12']
       }))
-      .pipe( gulpif( env.dev, $.rename('styles.css')) )
-    .pipe( gulpif( env.dev, $.sourcemaps.write() ) )
-    .pipe( gulpif( env.dev, gulp.dest(destination_path)) )
+      .pipe( $.rename('styles' + minExtension + '.css') )
+    .pipe( $.if( env.dev, $.sourcemaps.write() ) )
+    .pipe( $.if( env.dev, gulp.dest(destination_path)) )
     .pipe(browserSync.stream())
 
     // Run --production to generate minified files
-    .pipe( gulpif( env.production, $.minifyCss({sourceMap: false})) )
-    .pipe( gulpif( env.production, $.rename('styles.min.css')) )
-    .pipe( gulpif( env.production, gulp.dest(destination_path)) );
+    .pipe( $.if( env.production, $.minifyCss({sourceMap: false})) )
+    .pipe( $.if( env.production, gulp.dest(destination_path)) );
 });
+
 
 
 /**
@@ -128,25 +152,35 @@ gulp.task('image_task', function() {
       svgoPlugins: [{removeUnknownsAndDefaults: false}],
       use: [pngcrush()]
     }))
-    .pipe(gulp.dest(src_path + 'images'));
+    .pipe(gulp.dest(production_path + 'images'));
 });
 
 
-// BROWSERSYNC
-gulp.task('js-watch', ['jshint', 'scripts_task'], browserSync.reload);
+/**
+ * JS WATCH TASK
+ *
+ * Runs on Serve Task, runs lint and scripts task, reloads page.
+ */
+gulp.task('js_watch', ['js_lint_task', 'scripts_task'], browserSync.reload);
 
 
-// WATCH TASK
+/**
+ * SERVE TASK
+ *
+ * Initializes Browsersync
+ */
 gulp.task('watch', function() {
   browserSync.init({
       proxy: "proxy.dev"
   });
 
   gulp.watch([path + 'styles/**/*'], ['style_task']);
-  gulp.watch([path + 'scripts/**/*'], ['js-watch']);
+  gulp.watch([path + 'scripts/**/*'], ['js_watch']);
   gulp.watch([path + 'img/**/*'], ['image_task']);
   gulp.watch(['**/*.php', '**/*.html']).on('change', browserSync.reload);
 });
+
+
 
 /**
  * Default Gulp Task
@@ -155,10 +189,20 @@ gulp.task('watch', function() {
 gulp.task('default', ['scripts_task', 'style_task', 'image_task', 'html_src_task']);
 
 
+
 /**
  * Build Task
- * Scripts, Styles, Images, HTML Source
+ *
+ * Run when first installing.
+ * Build Tasks, Scripts, Styles, Images, HTML Source
  */
-gulp.task('default', ['scripts_task', 'style_task', 'image_task', 'html_src_task']);
+gulp.task('build', [
+  'build_modernizr',
+  'build_jquery',
+  'scripts_task',
+  'style_task',
+  'image_task',
+  'html_src_task'
+]);
 
 

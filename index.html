@@ -9,16 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- build:css -->
-  <link rel="stylesheet" href="dist/styles.min.css">
+  <link rel="stylesheet" href="src/styles.css">
   <!-- endbuild -->
+  <script src="dist/modernizr-2.8.3.min.js"></script>
 </head>
 
 <body>
   Welcome to Mercury.
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="dist/jquery.min.js"><\/script>')</script>
   <!-- build:js -->
-  <script src="dist/main.min.js"></script>
+  <script src="src/main.js"></script>
   <!-- endbuild -->
 </body>
 
