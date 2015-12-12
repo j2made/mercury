@@ -14,7 +14,7 @@ When you run a gulp command, such as `gulp style_task` or `gulp scripts_task`, u
 
 To create production ready files, run `gulp --production`, and minified files will be created in the `dist/` directory. The `index.html` file will automatically be updated with the `dist/` file paths for scripts and styles as well. Running `gulp` without the production flag will switch the file paths in `index.html` back to `src/`.
 
-*Issues and Contributions*
+_Issues and Contributions_
 
 Report issues: https://github.com/iamhexcoder/mercury/issues
 
