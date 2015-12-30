@@ -2,7 +2,7 @@
 node_modules
 bower_components
 
-# /dist file is built with gulp
+# /src files are built with gulp
 src
 
 
