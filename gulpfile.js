@@ -126,7 +126,7 @@ gulp.task('build_sass', function() {
       .pipe( glp.rename('styles' + minExtension + '.css') )
     .pipe( glp.if( env.dev, glp.sourcemaps.write() ) )
     .pipe( glp.if( env.dev, gulp.dest(destination_path)) )
-    .pipe(browserSync.stream())
+    .pipe( browserSync.stream({match: '**/*.css'}) )
 
     // Run --production to generate minified files
     .pipe( glp.if( env.production, glp.minifyCss({sourceMap: false})) )
