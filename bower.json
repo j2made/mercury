@@ -1,5 +1,5 @@
 {
-  "name": "Mercury",
+  "name": "mercury",
   "version": "0.1.0",
   "homepage": "http://github.com/iamhexcoder/mercury",
   "authors": [
@@ -13,19 +13,5 @@
     "assets/vendor"
   ],
   "dependencies": {
-    "jquery": "1.11.1",
-    "bourbon": "~4.2.6",
-    "neat": "~1.7.2",
-    "normalize-scss": "latest",
-    "modernizr": "2.8.3"
-  },
-  "overrides": {
-    "modernizr": {
-      "main": "./modernizr.js",
-      "ignore": true
-    },
-    "jquery": {
-      "ignore": true
-    }
   }
 }

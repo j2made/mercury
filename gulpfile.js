@@ -1,3 +1,8 @@
+
+// CONFIG VARS
+devURL = 'virtual-host.dev';
+
+
 // GULP PLUGINS
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
@@ -5,7 +10,7 @@ var pngcrush = require('imagemin-pngcrush');
 var args = require('yargs').argv;
 var mainBowerFiles = require('main-bower-files');
 var jshint = require('gulp-jshint');
-var $ = require('gulp-load-plugins')();
+var glp = require('gulp-load-plugins')();
 
 
 // DIR AND PATH VARS
@@ -43,9 +48,9 @@ gulp.task('js_lint_task', function(){
  *
  * Output the proper css file in the head
  */
-gulp.task('html_src_task', function(){
+gulp.task('build_html', function(){
   gulp.src('index.html')
-  .pipe( $.htmlReplace({
+  .pipe( glp.htmlReplace({
       'css': destination_path + 'styles' + minExtension + '.css',
       'js': destination_path + 'main' + minExtension + '.js'
     },
@@ -62,23 +67,15 @@ gulp.task('html_src_task', function(){
 /**
  * BUILD TASKS
  *
- * Build Modernizr.js and Jquery.js files
+ * Build backup Jquery file
  */
-gulp.task('build_modernizr', function() {
-  gulp.src(bower_path + '/modernizr/modernizr.js')
-    .pipe($.uglify())
-    .pipe($.rename('modernizr-2.8.3.min.js'))
-    .pipe(gulp.dest(production_path))
-});
 // jQuery
 gulp.task('build_jquery', function() {
-  gulp.src(bower_path + '/jQuery/dist/jquery.js')
-    .pipe($.uglify())
-    .pipe($.rename('jquery.min.js'))
+  gulp.src('./node-modules/jquery/dist/jquery.js')
+    .pipe(glp.uglify())
+    .pipe(glp.rename('jquery.min.js'))
     .pipe(gulp.dest(production_path))
 });
-
-
 
 
 
@@ -89,7 +86,7 @@ gulp.task('build_jquery', function() {
  * Create `main.js` file. If `--production` arg is passed,
  * a minified file will be created in `/src`
  */
-gulp.task('scripts_task', ['js_lint_task'], function() {
+gulp.task('build_scripts', ['js_lint_task'], function() {
 
   // Get all Bower js files.
   var jsFiles = mainBowerFiles('**/*.js');
@@ -98,13 +95,13 @@ gulp.task('scripts_task', ['js_lint_task'], function() {
 
   // Start Gulp tasks
   gulp.src(jsFiles)
-    .pipe( $.if( env.dev, $.plumber()) )
-    .pipe( $.if( env.dev, $.sourcemaps.init() ) )
-      .pipe($.concat('main' + minExtension + '.js'))
-    .pipe( $.if( env.dev, $.sourcemaps.write() ) )
+    .pipe( glp.if( env.dev, glp.plumber()) )
+    .pipe( glp.if( env.dev, glp.sourcemaps.init() ) )
+      .pipe(glp.concat('main' + minExtension + '.js'))
+    .pipe( glp.if( env.dev, glp.sourcemaps.write() ) )
 
     // Run --production to generate minified files
-    .pipe( $.if( env.production, $.uglify()) )
+    .pipe( glp.if( env.production, glp.uglify()) )
     .pipe( gulp.dest(destination_path) );
 
 });
@@ -118,22 +115,22 @@ gulp.task('scripts_task', ['js_lint_task'], function() {
  * Create `styles.css` file. If `--production` arg is passed,
  * a minified file will be created in `/dist`
  */
-gulp.task('style_task', function() {
+gulp.task('build_sass', function() {
   gulp.src(path + 'styles/main.scss')
-    .pipe( $.if( env.dev, $.plumber()) )
-    .pipe( $.if( env.dev, $.sourcemaps.init() ) )
-      .pipe($.sass({ errLogToConsole: true }))
-      .pipe($.autoprefixer({
+    .pipe( glp.if( env.dev, glp.plumber()) )
+    .pipe( glp.if( env.dev, glp.sourcemaps.init() ) )
+      .pipe(glp.sass({ errLogToConsole: true }))
+      .pipe(glp.autoprefixer({
         browsers: ['last 2 versions', 'ie 8', 'ie 9', 'android 2.3', 'android 4', 'opera 12']
       }))
-      .pipe( $.rename('styles' + minExtension + '.css') )
-    .pipe( $.if( env.dev, $.sourcemaps.write() ) )
-    .pipe( $.if( env.dev, gulp.dest(destination_path)) )
+      .pipe( glp.rename('styles' + minExtension + '.css') )
+    .pipe( glp.if( env.dev, glp.sourcemaps.write() ) )
+    .pipe( glp.if( env.dev, gulp.dest(destination_path)) )
     .pipe(browserSync.stream())
 
     // Run --production to generate minified files
-    .pipe( $.if( env.production, $.minifyCss({sourceMap: false})) )
-    .pipe( $.if( env.production, gulp.dest(destination_path)) );
+    .pipe( glp.if( env.production, glp.minifyCss({sourceMap: false})) )
+    .pipe( glp.if( env.production, gulp.dest(destination_path)) );
 });
 
 
@@ -144,9 +141,9 @@ gulp.task('style_task', function() {
  * Process images and minify nicely.
  * Minify SVGs just a bit
  */
-gulp.task('image_task', function() {
+gulp.task('build_images', function() {
   return gulp.src(path + 'img/*')
-    .pipe($.imagemin({
+    .pipe(glp.imagemin({
       progressive: true,
       interlaced: true,
       svgoPlugins: [{removeUnknownsAndDefaults: false}],
@@ -161,14 +158,14 @@ gulp.task('image_task', function() {
  *
  * Runs on Serve Task, runs lint and scripts task, reloads page.
  */
-gulp.task('js_watch', ['js_lint_task', 'scripts_task'], browserSync.reload);
+gulp.task('js_watch', ['js_lint_task', 'build_scripts'], browserSync.reload);
 
 
 /**
  * Default Gulp Task
  * Scripts, Styles, Images
  */
-gulp.task('default', ['scripts_task', 'style_task', 'image_task', 'html_src_task']);
+gulp.task('default', ['build_scripts', 'build_sass', 'build_images', 'build_html']);
 
 
 /**
@@ -178,12 +175,11 @@ gulp.task('default', ['scripts_task', 'style_task', 'image_task', 'html_src_task
  * Build Tasks, Scripts, Styles, Images, HTML Source
  */
 gulp.task('build', [
-  'build_modernizr',
   'build_jquery',
-  'scripts_task',
-  'style_task',
-  'image_task',
-  'html_src_task'
+  'build_scripts',
+  'build_sass',
+  'build_images',
+  'build_html'
 ]);
 
 
@@ -193,13 +189,13 @@ gulp.task('build', [
  *
  * Initializes Browsersync
  */
-gulp.task('serve', function() {
+gulp.task('serve', ['build_html'], function() {
   browserSync.init({
-      proxy: "CONFIG_THIS"
+      proxy: devURL
   });
 
-  gulp.watch([path + 'styles/**/*'], ['style_task']);
+  gulp.watch([path + 'styles/**/*'], ['build_sass']);
   gulp.watch([path + 'scripts/**/*'], ['js_watch']);
-  gulp.watch([path + 'img/**/*'], ['image_task']);
+  gulp.watch([path + 'img/**/*'], ['build_images']);
   gulp.watch(['**/*.php', '**/*.html']).on('change', browserSync.reload);
 });
