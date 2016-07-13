@@ -1,0 +1,11 @@
+// Button Styles
+// -------------
+
+.btn {
+  @include btn-reset();
+}
+
+#{$all-buttons},
+.btn-default {
+  @include btn-reset();
+}
