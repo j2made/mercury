@@ -7,6 +7,6 @@
 // Loop through h1 - h6
 @for $i from 1 through 6 {
   h#{$i} {
-    @extend %header-reset;
+    @include header-reset();
   }
 }

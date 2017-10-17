@@ -5,9 +5,9 @@
 // =============================================================================
 
 @charset 'UTF-8';
-@import '../../../node_modules/sanitize.css/lib/sanitize.scss';                // Sanitize
-@import '../../../node_modules/bourbon/app/assets/stylesheets/bourbon.scss';   // Bourbon
-@import '../../../node_modules/bourbon-neat/app/assets/stylesheets/neat.scss'; // Neat
+@import '../partials/utilities/reset';                       // Eric Meyer Reset
+@import '../partials/utilities/partsandlabor_overwrites';    // Parts and Labor Overwrites
+@import '../../../node_modules/partsandlabor/partsandlabor'; // Parts and Labor
 
 // THEME STYLES
 // =============================================================================

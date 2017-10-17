@@ -25,7 +25,6 @@ html {
 }
 
 body {
-  @include font-feature-settings('kern', 'liga', "frac", 'pnum');
   background-color: $base-background-color;
   color: $base-font-color;
   font-family: $base-font-family;
