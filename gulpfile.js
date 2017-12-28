@@ -2,7 +2,7 @@
  * CONFIGURATION VARIABLES
  *
  */
-var devUrl = 'mercury.dev';
+var devUrl = 'localhost:3000';
 
 
 
@@ -347,6 +347,3 @@ gulp.task('default', sequence(
   'copy_fonts',
   'build_rev'
 ));
-
-
-
