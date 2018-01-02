@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "./node_modules/gulp/bin/gulp.js",
     "start": "./node_modules/gulp/bin/gulp.js serve",
+    "start:production": "build:production",
     "build:production": "./node_modules/gulp/bin/gulp.js --production"
   },
   "repository": {
