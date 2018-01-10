@@ -2,7 +2,7 @@
  * CONFIGURATION VARIABLES
  *
  */
-var devUrl = 'mercury.dev';
+var devUrl = 'localhost:3000';
 
 
 
@@ -313,9 +313,24 @@ gulp.task('watch_reload', function(){ browsersync.reload(); });
  * Initialize browsersync, watch for file changes
  */
 gulp.task('serve', ['watch_bundle'], function(){
-  browsersync({
-    proxy: devUrl
-  });
+
+  var args = {}
+
+  if (production) {
+    var args = {
+      server: {
+        baseDir: 'dist'
+      }
+    }
+  } else {
+    var args = {
+      server: {
+        baseDir: './'
+      }
+    }
+  }
+
+  browsersync(args)
 
   // Watch tasks
   gulp.watch([base.sass + '/**/*.scss'], ['build_sass']);
@@ -347,6 +362,3 @@ gulp.task('default', sequence(
   'copy_fonts',
   'build_rev'
 ));
-
-
-

@@ -1,10 +1,17 @@
 # Mercury
 
-Gulp, Bower, and Sass. Built to get a simple mission into orbit quickly.
+Built to get a simple mission into orbit quickly.
 
 Write a simple one pager, a small demo, or use it as a base for something bigger. Mercury is a simple boilerplate, so there's room for anything.
 
 ## Usage
+
+#### Install
+`yarn install` (or `npm install`)
+
+#### Start Local Dev Env
+`yarn start` (or `npm start`)
+
 
 Clone this project to your local machine. Run `npm install`. This should run `bower install` and `gulp build`. If, for some reason, those two commands fail to run, you should run them manually.
 
@@ -21,4 +28,3 @@ To create production ready files, run `gulp --production`, and minified files wi
 Report issues: https://github.com/iamhexcoder/mercury/issues
 
 Contributors are welcome. Make a pull request, open an issue to request a feature or propose a change. Any help is always appreciated.
-
